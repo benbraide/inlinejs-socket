@@ -1,21 +1,21 @@
 import { Socket } from "socket.io-client";
 
 export interface ISocketClient{
-    get io(): Socket | null;
-    get socketId(): string;
-    get componentId(): string;
-    get connected(): boolean;
-    connect(): void;
-    disconnect(): void;
+    GetNative(): Socket | null;
+    GetId(): string;
+    IsConnected(): boolean;
+    Connect(): void;
+    Disconnect(): void;
+    Emit(event: string, data: any, room?: string): void;
 }
 
 export interface ISocketChannel{
-    get io(): Socket | null;
-    get subscribed(): boolean;
-    get name(): string;
+    GetName(): string;
+    IsSubscribed(): boolean;
     Subscribe(): void;
     Unsubscribe(): void;
-
+    Resubscribe(): void;
+    Emit(event: string, data: any): void;
 }
 
 export interface ISocketSubscribedInfo{

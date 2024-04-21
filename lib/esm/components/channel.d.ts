@@ -1,20 +1,26 @@
+import { IElementScopeCreatedCallbackParams } from '@benbraide/inlinejs';
 import { CustomElement } from '@benbraide/inlinejs-element';
-import { Socket } from "socket.io-client";
-export declare class SocketChannel extends CustomElement {
+import { ISocketChannel, ISocketClient } from '../types';
+export declare class SocketChannel extends CustomElement implements ISocketChannel {
+    protected client_: ISocketClient | null;
+    protected loaded_: boolean;
     protected subscribed_: boolean;
     protected clientIds_: string[];
-    protected changesId_: string;
+    protected name_: string;
+    defer: boolean;
+    UpdateNameProperty(value: string): void;
+    UpdateClientProperty(value: ISocketClient): void;
     constructor();
-    get io(): Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null | undefined;
-    get socketId(): string;
-    get componentId(): string;
-    get subscribed(): boolean;
-    get name(): any;
-    Subscribe(io?: Socket): void;
-    Unsubscribe(io?: Socket): void;
-    protected ToggleSubscribed_(subscribed: boolean, io?: Socket): void;
-    protected FindComponent_(): import("@benbraide/inlinejs").IComponent | null;
-    protected Bootstrap_(io: Socket): void;
+    GetName(): string;
+    IsSubscribed(): boolean;
+    Subscribe(): void;
+    Unsubscribe(): void;
+    Resubscribe(): void;
+    Emit(event: string, data: any): void;
+    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected FindClient_(): ISocketClient | null;
+    protected FindNative_(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;
+    protected ToggleSubscribed_(subscribed: boolean): void;
 }
 export declare class SocketRoom extends SocketChannel {
 }
