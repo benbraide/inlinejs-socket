@@ -4,7 +4,6 @@ import { Socket } from "socket.io-client";
 import { ISocketClient } from '../types';
 export declare class SocketClient extends CustomElement implements ISocketClient {
     protected io_: Socket | null;
-    protected id_: string;
     protected connected_: boolean;
     path: string;
     constructor();

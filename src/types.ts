@@ -16,6 +16,7 @@ export interface ISocketChannel{
     Unsubscribe(): void;
     Resubscribe(): void;
     Emit(event: string, data: any): void;
+    FindNative(): Socket | null;
 }
 
 export interface ISocketSubscribedInfo{

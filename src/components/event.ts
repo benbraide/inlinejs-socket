@@ -22,13 +22,13 @@ export class SocketEvent extends CustomElement{
     }
 
     @Property({ type: 'object', checkStoredObject: true })
-    public UpdateChannelProperty(value: ISocketChannel){
-        this.UpdateChannel_(value);
+    public UpdateChannelProperty(value: ISocketChannel | string){
+        typeof value !== 'string' && this.UpdateChannel_(value);
     }
 
     @Property({ type: 'object', checkStoredObject: true })
-    public UpdateRoomProperty(value: ISocketChannel){
-        this.UpdateChannel_(value);
+    public UpdateRoomProperty(value: ISocketChannel | string){
+        typeof value !== 'string' && this.UpdateChannel_(value);
     }
     
     public constructor(){
@@ -76,11 +76,15 @@ export class SocketEvent extends CustomElement{
     }
 
     protected FindChannel_(){
-        return (this.channel_ = (this.channel_ || (FindAncestor(this, ancestor => ('Subscribe' in ancestor)) as unknown as (ISocketChannel | null))));
+        return (this.channel_ || (FindAncestor(this, ancestor => ('Subscribe' in ancestor)) as ISocketChannel | null));
     }
 
     protected FindNative_(){
-        return ((FindAncestor(this, ancestor => ('GetNative' in ancestor)) as unknown as ISocketClient)?.GetNative() || null);
+        if (this.channel_){
+            return (this.channel_.FindNative() || null);
+        }
+        const ancestor = (FindAncestor(this, ancestor => ('GetNative' in ancestor)) as ISocketClient | null);
+        return (ancestor ? ancestor.GetNative() : null);
     }
 }
 

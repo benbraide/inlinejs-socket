@@ -6,7 +6,6 @@ import { ISocketChannel, ISocketClient } from '../types';
 
 export class SocketClient extends CustomElement implements ISocketClient{
     protected io_: Socket | null = null;
-    protected id_ = '';
     protected connected_ = false;
 
     @Property({  type: 'string' })
@@ -24,7 +23,7 @@ export class SocketClient extends CustomElement implements ISocketClient{
     }
 
     public GetId(){
-        return (this.id_ || this.io_?.id || '');
+        return (this.io_?.id || '');
     }
 
     public IsConnected(){
@@ -42,26 +41,23 @@ export class SocketClient extends CustomElement implements ISocketClient{
     public Emit(event: string, data: any, room?: string){
         this.io_?.emit(event, {
             room: (room || (IsObject(data) && data.room) || ''),
-            details: {
-                id: this.id_,
-                payload: data,
-            },
+            details: { payload: data },
         });
     }
 
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
         super.HandleElementScopeCreated_({ scope, ...rest }, () => {
             this.io_ = (this.path ? io(this.path) : io());
+
             this.io_.on('socket:connect', () => {
-                if (this.connected_){
-                    Array.from(this.children).forEach((child) => {
-                        ('Resubscribe' in child) && (child as unknown as ISocketChannel)['Resubscribe']();
-                    });
-                }
-                else{
-                    this.connected_ = true;
-                }
+                this.connected_ = true;
+                Array.from(this.children).forEach((child) => {
+                    ('Resubscribe' in child) && (child as unknown as ISocketChannel)['Resubscribe']();
+                });
             });
+
+            this.io_.on('disconnect', () => (this.connected_ = false));
+
             postAttributesCallback && postAttributesCallback();
         });
 

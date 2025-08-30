@@ -5,11 +5,10 @@ export declare class SocketChannel extends CustomElement implements ISocketChann
     protected client_: ISocketClient | null;
     protected loaded_: boolean;
     protected subscribed_: boolean;
-    protected clientIds_: string[];
     protected name_: string;
     defer: boolean;
     UpdateNameProperty(value: string): void;
-    UpdateClientProperty(value: ISocketClient): void;
+    UpdateClientProperty(value: ISocketClient | string): void;
     constructor();
     GetName(): string;
     IsSubscribed(): boolean;
@@ -17,6 +16,7 @@ export declare class SocketChannel extends CustomElement implements ISocketChann
     Unsubscribe(): void;
     Resubscribe(): void;
     Emit(event: string, data: any): void;
+    FindNative(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
     protected FindClient_(): ISocketClient | null;
     protected FindNative_(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;

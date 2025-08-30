@@ -8,8 +8,8 @@ export declare class SocketEvent extends CustomElement {
     protected name_: string;
     action: string;
     UpdateNameProperty(value: string): void;
-    UpdateChannelProperty(value: ISocketChannel): void;
-    UpdateRoomProperty(value: ISocketChannel): void;
+    UpdateChannelProperty(value: ISocketChannel | string): void;
+    UpdateRoomProperty(value: ISocketChannel | string): void;
     constructor();
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
     protected UpdateChannel_(value: ISocketChannel): void;

@@ -7,8 +7,6 @@ export class SocketChannel extends CustomElement implements ISocketChannel{
     
     protected loaded_ = false;
     protected subscribed_ = false;
-    
-    protected clientIds_ = new Array<string>();
     protected name_ = '';
 
     @Property({ type: 'boolean' })
@@ -28,7 +26,9 @@ export class SocketChannel extends CustomElement implements ISocketChannel{
     }
 
     @Property({ type: 'object', checkStoredObject: true })
-    public UpdateClientProperty(value: ISocketClient){
+    public UpdateClientProperty(value: ISocketClient | string){
+        if (typeof value === 'string') return;
+        
         if (this.subscribed_ && value !== this.client_){
             this.ToggleSubscribed_(false);
             this.client_ = value;
@@ -74,6 +74,10 @@ export class SocketChannel extends CustomElement implements ISocketChannel{
         this.FindClient_()?.Emit(event, data, this.name_);
     }
 
+    public FindNative(){
+        return this.FindNative_();
+    }
+
     protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
         super.HandleElementScopeCreated_({ scope, ...rest }, () => {
             this.loaded_ = true;
@@ -88,12 +92,7 @@ export class SocketChannel extends CustomElement implements ISocketChannel{
     }
 
     protected FindClient_(){
-        if (this.client_){
-            return this.client_;
-        }
-        
-        const ancestor = FindAncestor(this, ancestor => ('Emit' in ancestor));
-        return (this.client_ = (ancestor ? (ancestor as unknown as ISocketClient) : null));
+        return this.client_ || (FindAncestor(this, ancestor => ('Emit' in ancestor)) as ISocketClient | null);
     }
 
     protected FindNative_(){
