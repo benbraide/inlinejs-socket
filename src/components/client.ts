@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams, IsObject } from '@benbraide/inlinejs';
+import { IElementScope, IsObject } from '@benbraide/inlinejs';
 import { CustomElement, Property, RegisterCustomElement } from '@benbraide/inlinejs-element';
 
 import { io, Socket } from "socket.io-client";
@@ -45,26 +45,25 @@ export class SocketClient extends CustomElement implements ISocketClient{
         });
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            this.io_ = (this.path ? io(this.path) : io());
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.io_?.close();
+        this.io_ = null;
+    }
 
-            this.io_.on('socket:connect', () => {
-                this.connected_ = true;
-                Array.from(this.children).forEach((child) => {
-                    ('Resubscribe' in child) && (child as unknown as ISocketChannel)['Resubscribe']();
-                });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+
+        this.io_ = (this.path ? io(this.path) : io());
+
+        this.io_.on('socket:connect', () => {
+            this.connected_ = true;
+            Array.from(this.children).forEach((child) => {
+                ('Resubscribe' in child) && (child as unknown as ISocketChannel)['Resubscribe']();
             });
-
-            this.io_.on('disconnect', () => (this.connected_ = false));
-
-            postAttributesCallback && postAttributesCallback();
         });
 
-        scope.AddUninitCallback(() => {
-            this.io_?.close();
-            this.io_ = null;
-        });
+        this.io_.on('disconnect', () => (this.connected_ = false));
     }
 
     protected ToggleConnected_(connected: boolean){

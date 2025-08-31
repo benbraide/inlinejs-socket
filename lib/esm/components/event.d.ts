@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from '@benbraide/inlinejs';
+import { IElementScope } from '@benbraide/inlinejs';
 import { CustomElement } from '@benbraide/inlinejs-element';
 import { ISocketChannel } from '../types';
 export declare class SocketEvent extends CustomElement {
@@ -11,7 +11,8 @@ export declare class SocketEvent extends CustomElement {
     UpdateChannelProperty(value: ISocketChannel | string): void;
     UpdateRoomProperty(value: ISocketChannel | string): void;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
     protected UpdateChannel_(value: ISocketChannel): void;
     protected FindChannel_(): ISocketChannel | null;
     protected FindNative_(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;

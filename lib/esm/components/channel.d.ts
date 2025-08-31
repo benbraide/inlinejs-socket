@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from '@benbraide/inlinejs';
+import { IElementScope } from '@benbraide/inlinejs';
 import { CustomElement } from '@benbraide/inlinejs-element';
 import { ISocketChannel, ISocketClient } from '../types';
 export declare class SocketChannel extends CustomElement implements ISocketChannel {
@@ -17,7 +17,9 @@ export declare class SocketChannel extends CustomElement implements ISocketChann
     Resubscribe(): void;
     Emit(event: string, data: any): void;
     FindNative(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostAttributesProcessPostfix_(): void;
+    protected HandlePostProcess_(): void;
     protected FindClient_(): ISocketClient | null;
     protected FindNative_(): import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap> | null;
     protected ToggleSubscribed_(subscribed: boolean): void;

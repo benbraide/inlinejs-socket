@@ -1,4 +1,4 @@
-import { EvaluateLater, FindAncestor, IElementScopeCreatedCallbackParams, IsObject } from '@benbraide/inlinejs';
+import { EvaluateLater, FindAncestor, IElementScope, IsObject } from '@benbraide/inlinejs';
 import { CustomElement, Property, RegisterCustomElement } from '@benbraide/inlinejs-element';
 import { ISocketChannel, ISocketClient } from '../types';
 
@@ -55,16 +55,15 @@ export class SocketEvent extends CustomElement{
         };
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, () => {
-            this.loaded_ = true;
-            this.name_ && this.FindNative_()?.on(this.name_, this.handler_);
-            postAttributesCallback && postAttributesCallback();
-        });
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.name_ && this.FindNative_()?.off(this.name_, this.handler_);
+    }
 
-        scope.AddUninitCallback(() => {
-            this.name_ && this.FindNative_()?.off(this.name_, this.handler_);
-        });
+    protected HandlePostAttributesProcessPostfix_(): void {
+        super.HandlePostAttributesProcessPostfix_();
+        this.loaded_ = true;
+        this.name_ && this.FindNative_()?.on(this.name_, this.handler_);
     }
 
     protected UpdateChannel_(value: ISocketChannel){
